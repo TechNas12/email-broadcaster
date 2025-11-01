@@ -1,11 +1,11 @@
 from django.db import models
-from django_cryptography.fields import encrypt
+from encrypted_model_fields.fields import EncryptedCharField
 
 # Create your models here.
 class Sender(models.Model):
     name = models.CharField(max_length=200)
     email = models.EmailField(unique=True)
-    app_password = encrypt(models.CharField(max_length=19))
+    app_password = EncryptedCharField(max_length=19)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True)
@@ -17,3 +17,13 @@ class Sender(models.Model):
     
     def __str__(self):
         return f"Sender Name: {self.name} | Sender email: {self.email}"
+    
+class EmailOperations(models.Model):
+    sender = models.ForeignKey(Sender, on_delete=models.CASCADE, related_name="emails")
+    recipient = models.EmailField(unique=True)
+    subject = models.CharField(max_length=255)
+    message = models.TextField()
+    sent_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"{self.subject} -> {self.recipient}"
