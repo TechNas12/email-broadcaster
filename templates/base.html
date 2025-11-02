@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Mailer Ops{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * { transition: all 0.3s ease; }
+
+        .brand-name {
+            background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 50%, #3b82f6 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradient-shift 3s ease infinite;
+        }
+
+        @keyframes gradient-shift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .nav-link { position: relative; display: inline-block; color: #d1d5db; }
+        .nav-link:hover { color: #60a5fa; }
+        .nav-link::before {
+            content: ''; position: absolute; width: 0; height: 2px; bottom: -4px; left: 0;
+            background: linear-gradient(90deg, #3b82f6, #60a5fa);
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::before { width: 100%; }
+
+        header {
+            border-bottom: 1px solid rgba(59, 130, 246, 0.3);
+            transition: box-shadow 0.3s ease;
+        }
+        header.scrolled {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+        }
+
+        .menu-btn { transform: scale(1); }
+        .menu-btn:hover { transform: scale(1.1); }
+        .menu-btn:active { transform: scale(0.95); }
+
+        #mobile-menu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        #mobile-menu.show {
+            max-height: 300px;
+            transition: max-height 0.4s ease-in;
+        }
+
+        footer { border-top: 1px solid rgba(59, 130, 246, 0.2); }
+
+        .rotate-icon {
+            transform: rotate(0deg);
+            transition: transform 0.3s ease;
+        }
+        .rotate-icon.active { transform: rotate(180deg); }
+
+        .brand-name:hover { animation: gradient-shift 1.5s ease infinite; }
+    </style>
+
+    {% block head %}{% endblock %}
+</head>
+
+<body class="bg-gray-900 text-gray-100 min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header id="header" class="bg-gray-800 sticky top-0 z-50">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0">
+                    <a href="/" class="text-2xl font-bold brand-name">Mailer Ops</a>
+                </div>
+
+                <div class="hidden md:block">
+                    <div class="flex items-center space-x-8">
+                        <a href="/" class="nav-link font-medium">Home</a>
+                        <a href="{% url 'app:login' %}" class="nav-link font-medium">Login</a>
+                        <a href="{% url 'app:signup' %}" class="nav-link font-medium">Signup</a>
+                        <a href="#features" class="nav-link font-medium">Features</a>
+                    </div>
+                </div>
+
+                <div class="md:hidden">
+                    <button id="mobile-menu-btn" class="menu-btn text-gray-300 hover:text-blue-400 focus:outline-none">
+                        <svg id="menu-svg" class="h-6 w-6 rotate-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path id="menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6h16M4 12h16M4 18h16"></path>
+                            <path id="close-icon" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile Nav -->
+            <div id="mobile-menu" class="md:hidden">
+                <div class="flex flex-col space-y-3 pb-4">
+                    <a href="/" class="text-gray-300 hover:text-blue-400 font-medium">Home</a>
+                    <a href="{% url 'app:login' %}" class="text-gray-300 hover:text-blue-400 font-medium">Login</a>
+                    <a href="{% url 'app:signup' %}" class="text-gray-300 hover:text-blue-400 font-medium">Signup</a>
+                    <a href="#features" class="text-gray-300 hover:text-blue-400 font-medium">Features</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {% block content %}
+        <!-- Page-specific content goes here -->
+        {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 mt-auto">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center">
+            <p class="text-gray-400 text-sm">&copy; 2025 Mailer Ops. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const menuIcon = document.getElementById('menu-icon');
+        const closeIcon = document.getElementById('close-icon');
+        const menuSvg = document.getElementById('menu-svg');
+        const header = document.getElementById('header');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('show');
+            menuIcon.classList.toggle('hidden');
+            closeIcon.classList.toggle('hidden');
+            menuSvg.classList.toggle('active');
+        });
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 10) header.classList.add('scrolled');
+            else header.classList.remove('scrolled');
+        });
+    </script>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

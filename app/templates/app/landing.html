@@ -1,0 +1,275 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - Mailer Ops{% endblock %}
+
+{% block head %}
+<style>
+    /* Override main container padding for full-width background */
+    main {
+        padding: 0 !important;
+        max-width: 100% !important;
+    }
+    
+    /* Ensure footer appears above background */
+    footer {
+        position: relative;
+        z-index: 10 !important;
+    }
+    
+    .landing-background {
+        position: relative;
+        min-height: 100vh;
+        width: 100vw;
+        margin-left: calc(-50vw + 50%);
+        margin-right: calc(-50vw + 50%);
+        overflow: hidden;
+        padding: 0;
+    }
+    
+    .background-gradient {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: 0;
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #0f172a 50%, #1e293b 75%, #0f172a 100%);
+        background-size: 400% 400%;
+        animation: gradientFlow 15s ease infinite;
+    }
+    
+    @keyframes gradientFlow {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+    }
+    
+    .animated-blob {
+        position: fixed;
+        border-radius: 50%;
+        filter: blur(80px);
+        opacity: 0.3;
+        animation: blobAnimation 20s ease-in-out infinite;
+        z-index: 0;
+    }
+    
+    .blob-1 {
+        width: 500px;
+        height: 500px;
+        background: radial-gradient(circle, #3b82f6 0%, transparent 70%);
+        top: -200px;
+        left: -200px;
+        animation-delay: 0s;
+    }
+    
+    .blob-2 {
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(circle, #60a5fa 0%, transparent 70%);
+        bottom: -300px;
+        right: -200px;
+        animation-delay: 7s;
+    }
+    
+    .blob-3 {
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle, #818cf8 0%, transparent 70%);
+        top: 50vh;
+        left: 50vw;
+        transform: translate(-50%, -50%);
+        animation: blobAnimation3 20s ease-in-out infinite;
+        animation-delay: 14s;
+    }
+    
+    @keyframes blobAnimation {
+        0%, 100% {
+            transform: translate(0, 0) scale(1);
+        }
+        33% {
+            transform: translate(100px, -100px) scale(1.1);
+        }
+        66% {
+            transform: translate(-100px, 100px) scale(0.9);
+        }
+    }
+    
+    @keyframes blobAnimation3 {
+        0%, 100% {
+            transform: translate(-50%, -50%) scale(1);
+        }
+        33% {
+            transform: translate(calc(-50% + 100px), calc(-50% - 100px)) scale(1.1);
+        }
+        66% {
+            transform: translate(calc(-50% - 100px), calc(-50% + 100px)) scale(0.9);
+        }
+    }
+    
+    .content-wrapper {
+        position: relative;
+        z-index: 1;
+        padding: 2rem 1rem;
+        max-width: 1280px;
+        margin: 0 auto;
+    }
+    
+    @media (min-width: 640px) {
+        .content-wrapper {
+            padding: 2rem 1.5rem;
+        }
+    }
+    
+    @media (min-width: 1024px) {
+        .content-wrapper {
+            padding: 2rem 2rem;
+        }
+    }
+    
+    .grid-pattern {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-image: 
+            linear-gradient(rgba(59, 130, 246, 0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
+        background-size: 50px 50px;
+        z-index: 0;
+        pointer-events: none;
+    }
+    
+    /* Ensure body background matches for footer area */
+    body {
+        background: #0f172a;
+    }
+    
+    section {
+        position: relative;
+        z-index: 1;
+    }
+    
+    .glass-card {
+        background: rgba(31, 41, 55, 0.6);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(59, 130, 246, 0.2);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    }
+    
+    .glass-card:hover {
+        background: rgba(31, 41, 55, 0.8);
+        border-color: rgba(59, 130, 246, 0.4);
+        transform: translateY(-5px) scale(1.02);
+    }
+    
+    .cta-glass {
+        background: linear-gradient(135deg, rgba(37, 99, 235, 0.9) 0%, rgba(30, 64, 175, 0.9) 100%);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        box-shadow: 0 8px 32px 0 rgba(37, 99, 235, 0.37);
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Extend background to cover full document height
+    function updateBackgroundHeight() {
+        const backgroundGradient = document.querySelector('.background-gradient');
+        const gridPattern = document.querySelector('.grid-pattern');
+        const documentHeight = Math.max(
+            document.body.scrollHeight,
+            document.body.offsetHeight,
+            document.documentElement.clientHeight,
+            document.documentElement.scrollHeight,
+            document.documentElement.offsetHeight
+        );
+        
+        if (backgroundGradient) {
+            backgroundGradient.style.height = documentHeight + 'px';
+        }
+        if (gridPattern) {
+            gridPattern.style.height = documentHeight + 'px';
+        }
+    }
+    
+    // Update on load and resize
+    window.addEventListener('load', updateBackgroundHeight);
+    window.addEventListener('resize', updateBackgroundHeight);
+    
+    // Update after a short delay to ensure DOM is fully rendered
+    setTimeout(updateBackgroundHeight, 100);
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="landing-background">
+    <div class="background-gradient"></div>
+    <div class="grid-pattern"></div>
+    <div class="animated-blob blob-1"></div>
+    <div class="animated-blob blob-2"></div>
+    <div class="animated-blob blob-3"></div>
+    
+    <div class="content-wrapper">
+<!-- Hero Section -->
+<section class="text-center py-24 md:py-32 relative z-10">
+    <h1 class="text-6xl md:text-7xl lg:text-7xl font-bold mb-8 brand-name">
+        Welcome to Mailer Ops
+    </h1>
+    <p class="text-2xl md:text-3xl text-gray-300 mb-10 max-w-3xl mx-auto">
+        Your powerful email broadcasting solution. Send emails efficiently and manage your campaigns with ease.
+    </p>
+    <div class="flex flex-col sm:flex-row gap-5 justify-center">
+        <a href="{% url 'app:signup' %}" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-lg py-4 px-10 rounded-lg transition duration-300 transform hover:scale-105">
+            Get Started
+        </a>
+        <a href="{% url 'app:login' %}" class="bg-gray-700 hover:bg-gray-600 text-white font-semibold text-lg py-4 px-10 rounded-lg transition duration-300 transform hover:scale-105">
+            Login
+        </a>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section id="features" class="py-16">
+    <h2 class="text-4xl font-bold text-center mb-12">Features</h2>
+    <div class="grid md:grid-cols-3 gap-8">
+        <div class="glass-card p-6 rounded-lg transition duration-300">
+            <div class="text-blue-400 text-4xl mb-4">📧</div>
+            <h3 class="text-2xl font-semibold mb-3">Email Broadcasting</h3>
+            <p class="text-gray-300">
+                Send bulk emails to multiple recipients efficiently with our powerful broadcasting system.
+            </p>
+        </div>
+        <div class="glass-card p-6 rounded-lg transition duration-300">
+            <div class="text-blue-400 text-4xl mb-4">🔒</div>
+            <h3 class="text-2xl font-semibold mb-3">Secure & Safe</h3>
+            <p class="text-gray-300">
+                Your data is encrypted and secure. We take privacy seriously.
+            </p>
+        </div>
+        <div class="glass-card p-6 rounded-lg transition duration-300">
+            <div class="text-blue-400 text-4xl mb-4">⚡</div>
+            <h3 class="text-2xl font-semibold mb-3">Fast & Reliable</h3>
+            <p class="text-gray-300">
+                Lightning-fast email delivery with 99.9% uptime guarantee.
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-16 text-center">
+    <div class="cta-glass rounded-lg p-12">
+        <h2 class="text-4xl font-bold mb-4">Ready to get started?</h2>
+        <p class="text-xl text-blue-100 mb-8">
+            Join thousands of users who trust Mailer Ops for their email needs.
+        </p>
+        <a href="{% url 'app:signup' %}" class="bg-white text-blue-600 font-semibold py-3 px-8 rounded-lg hover:bg-gray-100 transition duration-300 transform hover:scale-105 inline-block">
+            Start Broadcasting Now
+        </a>
+    </div>
+</section>
+    </div>
+</div>
+{% endblock %}
+
