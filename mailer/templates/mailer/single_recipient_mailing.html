@@ -1,0 +1,472 @@
+{% extends 'base.html' %}
+
+{% block title %}Single Recipient Mailing - Mailer Ops{% endblock %}
+
+{% block head %}
+<style>
+    .form-container {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+    
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #d1d5db;
+        font-weight: 500;
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 0.75rem;
+        background-color: rgba(31, 41, 55, 0.6);
+        border: 1px solid rgba(59, 130, 246, 0.2);
+        border-radius: 0.5rem;
+        color: #f3f4f6;
+        font-size: 1rem;
+    }
+    
+    .form-control:focus {
+        outline: none;
+        border-color: rgba(59, 130, 246, 0.5);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+    
+    .form-control::placeholder {
+        color: #6b7280;
+    }
+    
+    .sender-actions {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+    
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+        border: none;
+        cursor: pointer;
+    }
+    
+    .btn-primary {
+        background-color: #3b82f6;
+        color: white;
+    }
+    
+    .btn-primary:hover {
+        background-color: #2563eb;
+        transform: translateY(-2px);
+    }
+    
+    .btn-success {
+        background-color: #10b981;
+        color: white;
+    }
+    
+    .btn-success:hover {
+        background-color: #059669;
+        transform: translateY(-2px);
+    }
+    
+    .btn-danger {
+        background-color: #ef4444;
+        color: white;
+    }
+    
+    .btn-danger:hover {
+        background-color: #dc2626;
+        transform: translateY(-2px);
+    }
+    
+    .btn-warning {
+        background-color: #f59e0b;
+        color: white;
+    }
+    
+    .btn-warning:hover {
+        background-color: #d97706;
+        transform: translateY(-2px);
+    }
+    
+    .divider {
+        height: 2px;
+        background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.3), transparent);
+        margin: 2rem 0;
+    }
+    
+    .alert {
+        padding: 1rem;
+        border-radius: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .alert-success {
+        background-color: rgba(16, 185, 129, 0.2);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+        color: #6ee7b7;
+    }
+    
+    textarea.form-control {
+        resize: vertical;
+        min-height: 150px;
+    }
+    
+    /* Modal Styles */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(4px);
+    }
+    
+    .modal.show {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .modal-content {
+        background: rgba(31, 41, 55, 0.95);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        border-radius: 1rem;
+        padding: 2rem;
+        max-width: 600px;
+        width: 90%;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        animation: modalFadeIn 0.3s ease;
+    }
+    
+    @keyframes modalFadeIn {
+        from {
+            opacity: 0;
+            transform: scale(0.9);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+    
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+    
+    .modal-header h2 {
+        color: #f3f4f6;
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+    
+    .close-modal {
+        background: none;
+        border: none;
+        color: #9ca3af;
+        font-size: 2rem;
+        cursor: pointer;
+        line-height: 1;
+        padding: 0;
+        width: 2rem;
+        height: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 0.25rem;
+        transition: all 0.2s;
+    }
+    
+    .close-modal:hover {
+        color: #f3f4f6;
+        background-color: rgba(239, 68, 68, 0.2);
+    }
+    
+    .modal-body input,
+    .modal-body textarea,
+    .modal-body select {
+        width: 100%;
+        padding: 0.75rem;
+        background-color: rgba(31, 41, 55, 0.8);
+        border: 1px solid rgba(59, 130, 246, 0.2);
+        border-radius: 0.5rem;
+        color: #f3f4f6;
+        font-size: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .modal-body input:focus,
+    .modal-body textarea:focus,
+    .modal-body select:focus {
+        outline: none;
+        border-color: rgba(59, 130, 246, 0.5);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+    
+    .modal-body label {
+        display: block;
+        color: #d1d5db;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+    }
+    
+    .modal-body .checkbox-label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .modal-footer {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1.5rem;
+        justify-content: flex-end;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="form-container">
+        <h1 class="text-4xl font-bold mb-8 text-center brand-name">Single Recipient Mailing</h1>
+        
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-success">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        
+        <!-- Sender Selection and Actions -->
+        <div class="glass-card p-6 rounded-lg mb-6">
+            <div class="form-group">
+                <label for="sender_select" class="form-label">Select Sender</label>
+                <select id="sender_select" class="form-control" onchange="updateSenderButtons(this.value)">
+                    <option value="">-- Select a sender --</option>
+                    {% for sender in senders %}
+                        <option value="{{ sender.id }}">{{ sender.name }} ({{ sender.email }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="sender-actions">
+                <button onclick="openAddModal()" class="btn btn-success">Add Sender</button>
+                <button id="update_btn" onclick="openUpdateModal()" class="btn btn-warning" disabled>Update Sender</button>
+                <button id="delete_btn" onclick="deleteSender()" class="btn btn-danger" disabled>Delete Sender</button>
+            </div>
+        </div>
+        
+        <!-- Page Divider -->
+        <div class="divider"></div>
+        
+        <!-- Email Form -->
+        <div class="glass-card p-6 rounded-lg">
+            <h2 class="text-2xl font-bold mb-6 text-gray-200">Compose Email</h2>
+            <form method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="{{ form.sender.id_for_label }}" class="form-label">{{ form.sender.label }}</label>
+                    {{ form.sender }}
+                    {% if form.sender.errors %}
+                        <div class="text-red-400 text-sm mt-1">{{ form.sender.errors }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label for="{{ form.recipient.id_for_label }}" class="form-label">{{ form.recipient.label }}</label>
+                    {{ form.recipient }}
+                    {% if form.recipient.errors %}
+                        <div class="text-red-400 text-sm mt-1">{{ form.recipient.errors }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label for="{{ form.subject.id_for_label }}" class="form-label">{{ form.subject.label }}</label>
+                    {{ form.subject }}
+                    {% if form.subject.errors %}
+                        <div class="text-red-400 text-sm mt-1">{{ form.subject.errors }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label for="{{ form.message.id_for_label }}" class="form-label">{{ form.message.label }}</label>
+                    {{ form.message }}
+                    {% if form.message.errors %}
+                        <div class="text-red-400 text-sm mt-1">{{ form.message.errors }}</div>
+                    {% endif %}
+                </div>
+                
+                <button type="submit" class="btn btn-primary w-full text-lg py-3">Send Email</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Add Sender Modal -->
+<div id="addModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Add Sender</h2>
+            <button class="close-modal" onclick="closeAddModal()">&times;</button>
+        </div>
+        <form method="POST" action="{% url 'mailer:add_sender' %}">
+            {% csrf_token %}
+            <input type="hidden" name="from_modal" value="1">
+            <div class="modal-body">
+                <label for="id_name">Sender Name</label>
+                <input type="text" name="name" id="id_name" class="form-control" placeholder="Enter sender name" required>
+                
+                <label for="id_email">Email Address</label>
+                <input type="email" name="email" id="id_email" class="form-control" placeholder="example@email.com" required>
+                
+                <label for="id_app_password">App Password</label>
+                <input type="password" name="app_password" id="id_app_password" class="form-control" placeholder="Enter app password (16 characters)" required>
+                
+                <label class="checkbox-label">
+                    <input type="checkbox" name="is_active" id="id_is_active" checked>
+                    <span>Active</span>
+                </label>
+            </div>
+            <div class="modal-footer">
+                <button type="button" onclick="closeAddModal()" class="btn btn-danger">Cancel</button>
+                <button type="submit" class="btn btn-success">Add Sender</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Update Sender Modal -->
+<div id="updateModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Update Sender</h2>
+            <button class="close-modal" onclick="closeUpdateModal()">&times;</button>
+        </div>
+        <form method="POST" id="updateForm">
+            {% csrf_token %}
+            <div class="modal-body">
+                <label for="update_name">Sender Name</label>
+                <input type="text" name="name" id="update_name" class="form-control" required>
+                
+                <label for="update_email">Email Address</label>
+                <input type="email" name="email" id="update_email" class="form-control" required>
+                
+                <label for="update_app_password">App Password</label>
+                <input type="password" name="app_password" id="update_app_password" class="form-control" placeholder="Leave blank to keep current password">
+                
+                <label class="checkbox-label">
+                    <input type="checkbox" name="is_active" id="update_is_active">
+                    <span>Active</span>
+                </label>
+            </div>
+            <div class="modal-footer">
+                <button type="button" onclick="closeUpdateModal()" class="btn btn-danger">Cancel</button>
+                <button type="submit" class="btn btn-warning">Update Sender</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    let selectedSenderId = null;
+    
+    function updateSenderButtons(senderId) {
+        selectedSenderId = senderId;
+        const updateBtn = document.getElementById('update_btn');
+        const deleteBtn = document.getElementById('delete_btn');
+        
+        if (senderId && senderId !== '') {
+            updateBtn.disabled = false;
+            deleteBtn.disabled = false;
+        } else {
+            updateBtn.disabled = true;
+            deleteBtn.disabled = true;
+        }
+    }
+    
+    function openAddModal() {
+        document.getElementById('addModal').classList.add('show');
+    }
+    
+    function closeAddModal() {
+        document.getElementById('addModal').classList.remove('show');
+    }
+    
+    function openUpdateModal() {
+        if (!selectedSenderId) return;
+        
+        // Fetch sender data and populate form
+        fetch(`/mailer/get-sender/${selectedSenderId}/`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('update_name').value = data.name || '';
+                document.getElementById('update_email').value = data.email || '';
+                document.getElementById('update_is_active').checked = data.is_active || false;
+                document.getElementById('updateForm').action = `/mailer/update-sender/${selectedSenderId}/`;
+                document.getElementById('updateModal').classList.add('show');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to load sender data');
+            });
+    }
+    
+    function closeUpdateModal() {
+        document.getElementById('updateModal').classList.remove('show');
+    }
+    
+    // Close modals when clicking outside
+    window.onclick = function(event) {
+        const addModal = document.getElementById('addModal');
+        const updateModal = document.getElementById('updateModal');
+        if (event.target == addModal) {
+            closeAddModal();
+        }
+        if (event.target == updateModal) {
+            closeUpdateModal();
+        }
+    }
+    
+    function deleteSender() {
+        if (selectedSenderId) {
+            if (confirm('Are you sure you want to delete this sender?')) {
+                window.location.href = `/mailer/delete-sender/${selectedSenderId}/`;
+            }
+        }
+    }
+    
+    // Initialize form with first sender if available
+    window.addEventListener('DOMContentLoaded', function() {
+        const senderSelect = document.getElementById('sender_select');
+        const formSender = document.getElementById('{{ form.sender.id_for_label }}');
+        
+        if (senderSelect.options.length > 1 && formSender) {
+            const firstOption = senderSelect.options[1];
+            if (firstOption) {
+                senderSelect.value = firstOption.value;
+                formSender.value = firstOption.value;
+                updateSenderButtons(firstOption.value);
+            }
+        }
+    });
+</script>
+{% endblock %}
+

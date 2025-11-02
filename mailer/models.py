@@ -20,7 +20,7 @@ class Sender(models.Model):
     
 class EmailOperations(models.Model):
     sender = models.ForeignKey(Sender, on_delete=models.CASCADE, related_name="emails")
-    recipient = models.EmailField(unique=True)
+    recipient = models.EmailField()
     subject = models.CharField(max_length=255)
     message = models.TextField()
     sent_at = models.DateTimeField(auto_now_add=True)

@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}Delete Sender - Mailer Ops{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="max-w-2xl mx-auto">
+        <h1 class="text-4xl font-bold mb-8 text-center brand-name">Delete Sender</h1>
+        
+        <div class="glass-card p-8 rounded-lg">
+            <p class="text-gray-300 mb-6 text-lg">
+                Are you sure you want to delete the sender <strong class="text-white">{{ sender.name }}</strong> ({{ sender.email }})?
+            </p>
+            <p class="text-red-400 mb-8">
+                This action cannot be undone.
+            </p>
+            
+            <form method="POST">
+                {% csrf_token %}
+                <div class="flex gap-4">
+                    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-6 rounded-lg transition duration-300">
+                        Delete Sender
+                    </button>
+                    <a href="{% url 'mailer:single_recipient_mailing' %}" class="bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-6 rounded-lg transition duration-300">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .glass-card {
+        background: rgba(31, 41, 55, 0.6);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(59, 130, 246, 0.2);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    }
+</style>
+{% endblock %}
+

@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Home - Mailer Ops{% endblock %}
+{% block title %}Mailer - Mailer Ops{% endblock %}
 
 {% block head %}
 <style>
@@ -162,11 +162,45 @@
         transform: translateY(-5px) scale(1.02);
     }
     
-    .cta-glass {
-        background: linear-gradient(135deg, rgba(37, 99, 235, 0.9) 0%, rgba(30, 64, 175, 0.9) 100%);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(59, 130, 246, 0.3);
-        box-shadow: 0 8px 32px 0 rgba(37, 99, 235, 0.37);
+    .placeholder-card {
+        min-height: 500px;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .placeholder-image {
+        width: 100%;
+        height: 33.333%;
+        min-height: 150px;
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(96, 165, 250, 0.2) 100%);
+        border-radius: 0.5rem 0.5rem 0 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 4rem;
+    }
+    
+    .placeholder-content {
+        flex: 1;
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    
+    .placeholder-description {
+        flex-grow: 1;
+        margin-bottom: 1.5rem;
+    }
+    
+    .hero-placeholders {
+        padding: 4rem 0;
+    }
+    
+    @media (min-width: 768px) {
+        .hero-placeholders {
+            padding: 6rem 0;
+        }
     }
 </style>
 {% endblock %}
@@ -211,64 +245,78 @@
     <div class="animated-blob blob-3"></div>
     
     <div class="content-wrapper">
-<!-- Hero Section -->
-<section class="text-center py-24 md:py-32 relative z-10">
-    <h1 class="text-6xl md:text-7xl lg:text-7xl font-bold mb-8 brand-name">
-        Welcome to Mailer Ops
-    </h1>
-    <p class="text-2xl md:text-3xl text-gray-300 mb-10 max-w-3xl mx-auto">
-        Your powerful email broadcasting solution. Send emails efficiently and manage your campaigns with ease.
-    </p>
-    <div class="flex flex-col sm:flex-row gap-5 justify-center">
-        <a href="/mailer/" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-lg py-4 px-10 rounded-lg transition duration-300 transform hover:scale-105">
-            Get Started
-        </a>
-        <a href="/about" class="bg-gray-700 hover:bg-gray-600 text-white font-semibold text-lg py-4 px-10 rounded-lg transition duration-300 transform hover:scale-105">
-            Learn More
-        </a>
-    </div>
-</section>
-
-<!-- Features Section -->
-<section class="py-16">
-    <h2 class="text-4xl font-bold text-center mb-12">Features</h2>
-    <div class="grid md:grid-cols-3 gap-8">
-        <div class="glass-card p-6 rounded-lg transition duration-300">
-            <div class="text-blue-400 text-4xl mb-4">📧</div>
-            <h3 class="text-2xl font-semibold mb-3">Email Broadcasting</h3>
-            <p class="text-gray-300">
-                Send bulk emails to multiple recipients efficiently with our powerful broadcasting system.
+        <!-- Placeholders Section as Hero -->
+        <section class="hero-placeholders text-center relative z-10">
+            <h1 class="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 brand-name">
+                Email Broadcaster
+            </h1>
+            <p class="text-xl md:text-2xl text-gray-300 mb-12 max-w-3xl mx-auto">
+                Manage and broadcast your emails efficiently with our powerful mailer system.
             </p>
-        </div>
-        <div class="glass-card p-6 rounded-lg transition duration-300">
-            <div class="text-blue-400 text-4xl mb-4">🔒</div>
-            <h3 class="text-2xl font-semibold mb-3">Secure & Safe</h3>
-            <p class="text-gray-300">
-                Your data is encrypted and secure. We take privacy seriously.
-            </p>
-        </div>
-        <div class="glass-card p-6 rounded-lg transition duration-300">
-            <div class="text-blue-400 text-4xl mb-4">⚡</div>
-            <h3 class="text-2xl font-semibold mb-3">Fast & Reliable</h3>
-            <p class="text-gray-300">
-                Lightning-fast email delivery with 99.9% uptime guarantee.
-            </p>
-        </div>
-    </div>
-</section>
-
-<!-- CTA Section -->
-<section class="py-16 text-center">
-    <div class="cta-glass rounded-lg p-12">
-        <h2 class="text-4xl font-bold mb-4">Ready to get started?</h2>
-        <p class="text-xl text-blue-100 mb-8">
-            Join thousands of users who trust Mailer Ops for their email needs.
-        </p>
-        <a href="/mailer/add-sender/" class="bg-white text-blue-600 font-semibold py-3 px-8 rounded-lg hover:bg-gray-100 transition duration-300 transform hover:scale-105 inline-block">
-            Start Broadcasting Now
-        </a>
-    </div>
-</section>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="glass-card placeholder-card rounded-lg transition duration-300 overflow-hidden">
+                    <div class="placeholder-image">
+                        <span class="text-blue-400">📋</span>
+                    </div>
+                    <div class="placeholder-content">
+                        <div>
+                            <h3 class="text-2xl font-semibold mb-3 text-gray-200">Single Recipient Mailing</h3>
+                            <p class="text-gray-400 placeholder-description">
+                                Mail a single recipient with a single click.
+                                Customize your email with your own content and branding.
+                            </p>
+                        </div>
+                        <a href="{% url 'mailer:single_recipient_mailing' %}" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg transition duration-300 transform hover:scale-105 block text-center">
+                            Single Recipient Mailing
+                        </a>
+                    </div>
+                </div>
+                <div class="glass-card placeholder-card rounded-lg transition duration-300 overflow-hidden">
+                    <div class="placeholder-image">
+                        <span class="text-blue-400">📊</span>
+                    </div>
+                    <div class="placeholder-content">
+                        <div>
+                            <h3 class="text-2xl font-semibold mb-3 text-gray-200">Placeholder 2</h3>
+                            <p class="text-gray-400 placeholder-description">
+                                Content placeholder area for future features or information. This is a description that provides details about the feature or service being described in this placeholder card.
+                            </p>
+                        </div>
+                        <button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg transition duration-300 transform hover:scale-105">
+                            Learn More
+                        </button>
+                    </div>
+                </div>
+                <div class="glass-card placeholder-card rounded-lg transition duration-300 overflow-hidden">
+                    <div class="placeholder-image">
+                        <span class="text-blue-400">⚙️</span>
+                    </div>
+                    <div class="placeholder-content">
+                        <div>
+                            <h3 class="text-2xl font-semibold mb-3 text-gray-200">Placeholder 3</h3>
+                            <p class="text-gray-400 placeholder-description">
+                                Content placeholder area for future features or information. This is a description that provides details about the feature or service being described in this placeholder card.
+                            </p>
+                        </div>
+                        <button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg transition duration-300 transform hover:scale-105">
+                            Learn More
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Action Buttons Section -->
+        <section class="text-center py-12 relative z-10">
+            <div class="flex flex-col sm:flex-row gap-5 justify-center">
+                <a href="{% url 'mailer:add_sender' %}" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-lg py-4 px-10 rounded-lg transition duration-300 transform hover:scale-105">
+                    Documentation
+                </a>
+                <a href="/" class="bg-gray-700 hover:bg-gray-600 text-white font-semibold text-lg py-4 px-10 rounded-lg transition duration-300 transform hover:scale-105">
+                    Logout
+                </a>
+            </div>
+        </section>
     </div>
 </div>
 {% endblock %}

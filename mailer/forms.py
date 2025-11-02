@@ -1,5 +1,5 @@
 from django import forms
-from .models import Sender
+from .models import Sender, EmailOperations
 
 
 class SenderEmailForm(forms.ModelForm):
@@ -96,3 +96,43 @@ class EmailComposeForm(forms.Form):
         if subject:
             subject = subject.strip()
         return subject
+
+
+class EmailOperationsForm(forms.ModelForm):
+    """Form for creating EmailOperations"""
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Update widget classes to match template styling
+        self.fields['sender'].widget.attrs.update({'class': 'form-control'})
+        self.fields['recipient'].widget.attrs.update({'class': 'form-control'})
+        self.fields['subject'].widget.attrs.update({'class': 'form-control'})
+        self.fields['message'].widget.attrs.update({'class': 'form-control'})
+    
+    class Meta:
+        model = EmailOperations
+        fields = ['sender', 'recipient', 'subject', 'message']
+        widgets = {
+            'sender': forms.Select(attrs={
+                'class': 'form-control',
+            }),
+            'recipient': forms.EmailInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'recipient@example.com'
+            }),
+            'subject': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter email subject'
+            }),
+            'message': forms.Textarea(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter your message here...',
+                'rows': 10
+            }),
+        }
+        labels = {
+            'sender': 'Select Sender',
+            'recipient': 'Recipient Email',
+            'subject': 'Subject',
+            'message': 'Message',
+        }
