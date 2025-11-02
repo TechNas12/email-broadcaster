@@ -1,5 +1,8 @@
 from django.db import models
 from encrypted_model_fields.fields import EncryptedCharField
+from tinymce.models import HTMLField
+
+
 
 # Create your models here.
 class Sender(models.Model):
@@ -22,8 +25,12 @@ class EmailOperations(models.Model):
     sender = models.ForeignKey(Sender, on_delete=models.CASCADE, related_name="emails")
     recipient = models.EmailField()
     subject = models.CharField(max_length=255)
-    message = models.TextField()
+    message = HTMLField() 
     sent_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
         return f"{self.subject} -> {self.recipient}"
+    
+class Attachment(models.Model):
+    email = models.ForeignKey('EmailOperations', on_delete=models.CASCADE, related_name='attachments')
+    file = models.FileField(upload_to='attachments/')

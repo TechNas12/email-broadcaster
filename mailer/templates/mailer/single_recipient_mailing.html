@@ -240,6 +240,7 @@
         justify-content: flex-end;
     }
 </style>
+{{ form.media }}
 {% endblock %}
 
 {% block content %}
@@ -280,42 +281,63 @@
         <!-- Email Form -->
         <div class="glass-card p-6 rounded-lg">
             <h2 class="text-2xl font-bold mb-6 text-gray-200">Compose Email</h2>
-            <form method="POST">
-                {% csrf_token %}
-                <div class="form-group">
-                    <label for="{{ form.sender.id_for_label }}" class="form-label">{{ form.sender.label }}</label>
-                    {{ form.sender }}
-                    {% if form.sender.errors %}
-                        <div class="text-red-400 text-sm mt-1">{{ form.sender.errors }}</div>
-                    {% endif %}
-                </div>
-                
-                <div class="form-group">
-                    <label for="{{ form.recipient.id_for_label }}" class="form-label">{{ form.recipient.label }}</label>
-                    {{ form.recipient }}
-                    {% if form.recipient.errors %}
-                        <div class="text-red-400 text-sm mt-1">{{ form.recipient.errors }}</div>
-                    {% endif %}
-                </div>
-                
-                <div class="form-group">
-                    <label for="{{ form.subject.id_for_label }}" class="form-label">{{ form.subject.label }}</label>
-                    {{ form.subject }}
-                    {% if form.subject.errors %}
-                        <div class="text-red-400 text-sm mt-1">{{ form.subject.errors }}</div>
-                    {% endif %}
-                </div>
-                
-                <div class="form-group">
-                    <label for="{{ form.message.id_for_label }}" class="form-label">{{ form.message.label }}</label>
-                    {{ form.message }}
-                    {% if form.message.errors %}
-                        <div class="text-red-400 text-sm mt-1">{{ form.message.errors }}</div>
-                    {% endif %}
-                </div>
-                
-                <button type="submit" class="btn btn-primary w-full text-lg py-3">Send Email</button>
-            </form>
+            <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div class="form-group">
+        <label for="{{ form.sender.id_for_label }}" class="form-label">{{ form.sender.label }}</label>
+        {{ form.sender }}
+        {% if form.sender.errors %}
+            <div class="text-red-400 text-sm mt-1">{{ form.sender.errors }}</div>
+        {% endif %}
+    </div>
+
+    <div class="form-group">
+        <label for="{{ form.recipient.id_for_label }}" class="form-label">{{ form.recipient.label }}</label>
+        {{ form.recipient }}
+        {% if form.recipient.errors %}
+            <div class="text-red-400 text-sm mt-1">{{ form.recipient.errors }}</div>
+        {% endif %}
+    </div>
+
+    <div class="form-group">
+        <label for="{{ form.subject.id_for_label }}" class="form-label">{{ form.subject.label }}</label>
+        {{ form.subject }}
+        {% if form.subject.errors %}
+            <div class="text-red-400 text-sm mt-1">{{ form.subject.errors }}</div>
+        {% endif %}
+    </div>
+
+    <div class="form-group">
+        <label for="{{ form.message.id_for_label }}" class="form-label">{{ form.message.label }}</label>
+        {{ form.message }}
+        {% if form.message.errors %}
+            <div class="text-red-400 text-sm mt-1">{{ form.message.errors }}</div>
+        {% endif %}
+    </div>
+
+    <!-- ✅ File Attachment Field -->
+    <div class="form-group">
+        <label for="{{ attachment_form.file.id_for_label }}" class="form-label">{{ attachment_form.file.label }}</label>
+        {{ attachment_form.file }}
+        <small class="text-gray-400 block mt-1">You can select multiple files (Ctrl + click)</small>
+        
+        <!-- Selected Files Display -->
+        <div id="selected-files-container" style="display: none; margin-top: 1rem; padding: 1rem; background-color: rgba(31, 41, 55, 0.6); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 0.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                <strong style="color: #60a5fa; font-size: 0.9rem;">Selected Files:</strong>
+                <span id="file-count" style="color: #9ca3af; font-size: 0.85rem;"></span>
+            </div>
+            <div id="selected-files-list" style="max-height: 150px; overflow-y: auto;"></div>
+        </div>
+        
+        {% if attachment_form.file.errors %}
+            <div class="text-red-400 text-sm mt-1">{{ attachment_form.file.errors }}</div>
+        {% endif %}
+    </div>
+
+    <button type="submit" class="btn btn-primary w-full text-lg py-3 mt-4">Send Email</button>
+</form>
         </div>
     </div>
 </div>
@@ -464,6 +486,63 @@
                 senderSelect.value = firstOption.value;
                 formSender.value = firstOption.value;
                 updateSenderButtons(firstOption.value);
+            }
+        }
+    });
+    
+    // Display selected files
+    function displaySelectedFiles(input) {
+        const container = document.getElementById('selected-files-container');
+        const fileList = document.getElementById('selected-files-list');
+        const fileCount = document.getElementById('file-count');
+        
+        if (input.files && input.files.length > 0) {
+            container.style.display = 'block';
+            fileCount.textContent = `${input.files.length} file(s) selected`;
+            
+            // Clear previous list
+            fileList.innerHTML = '';
+            
+            // Create list of selected files
+            for (let i = 0; i < input.files.length; i++) {
+                const file = input.files[i];
+                const fileItem = document.createElement('div');
+                fileItem.style.cssText = 'display: flex; justify-content: space-between; align-items: center; padding: 0.5rem; margin-bottom: 0.5rem; background-color: rgba(17, 24, 39, 0.5); border-radius: 0.25rem; border: 1px solid rgba(59, 130, 246, 0.1);';
+                
+                const fileName = document.createElement('span');
+                fileName.style.cssText = 'color: #d1d5db; font-size: 0.875rem; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;';
+                fileName.textContent = file.name;
+                
+                const fileSize = document.createElement('span');
+                fileSize.style.cssText = 'color: #9ca3af; font-size: 0.75rem; margin-left: 1rem;';
+                const sizeKB = (file.size / 1024).toFixed(2);
+                const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+                if (file.size >= 1024 * 1024) {
+                    fileSize.textContent = `${sizeMB} MB`;
+                } else {
+                    fileSize.textContent = `${sizeKB} KB`;
+                }
+                
+                fileItem.appendChild(fileName);
+                fileItem.appendChild(fileSize);
+                fileList.appendChild(fileItem);
+            }
+        } else {
+            container.style.display = 'none';
+        }
+    }
+    
+    // Add event listener to file input
+    window.addEventListener('DOMContentLoaded', function() {
+        const fileInput = document.getElementById('{{ attachment_form.file.id_for_label }}');
+        if (fileInput) {
+            fileInput.addEventListener('change', function() {
+                displaySelectedFiles(this);
+            });
+            
+            // Display files if any are already selected (e.g., after form validation error)
+            if (fileInput.files && fileInput.files.length > 0) {
+                displaySelectedFiles(fileInput);
             }
         }
     });

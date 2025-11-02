@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'encrypted_model_fields',
+    'tinymce',
+
 ]
 
 MIDDLEWARE = [
@@ -118,12 +120,13 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
+# Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
 
 # During development, this helps Django find your static files
-# STATICFILES_DIRS = [
-#     BASE_DIR / "static",  # optional global static folder - commented out since directory doesn't exist
-# ]
+STATICFILES_DIRS = [
+    BASE_DIR / "static",  # optional global static folder
+]
 
 # Folder where static files will be collected when deploying
 STATIC_ROOT = BASE_DIR / "staticfiles"
@@ -136,10 +139,19 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 FIELD_ENCRYPTION_KEY = "_3e88ke9CZdB-wgTlOj2fdt3WpndjqeywGKttjGaYys="
 
-# Email Configuration
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+TINYMCE_DEFAULT_CONFIG = {
+    'height': 360,
+    'width': 800,
+    'menubar': 'file edit view insert format tools table help',
+    'plugins': 'advlist autolink lists link image charmap print preview anchor searchreplace visualblocks code fullscreen insertdatetime media table paste code help wordcount',
+    'toolbar': 'undo redo | bold italic underline | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help',
+    'content_style': 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
+    'skin': 'oxide-dark',
+}
+
+
+#Email Configuration
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_USE_SSL = False
-# Note: Individual sender credentials will be used from the Sender model
+

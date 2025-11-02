@@ -1,5 +1,23 @@
 from django import forms
-from .models import Sender, EmailOperations
+from .models import Sender, EmailOperations, Attachment
+from tinymce.widgets import TinyMCE
+
+
+class MultipleFileInput(forms.FileInput):
+    """Custom FileInput widget that supports multiple file uploads"""
+    def __init__(self, attrs=None):
+        default_attrs = {}
+        if attrs:
+            default_attrs.update(attrs)
+        # Remove multiple from attrs to avoid Django's validation error
+        default_attrs.pop('multiple', None)
+        super().__init__(attrs=default_attrs)
+    
+    def build_attrs(self, base_attrs, extra_attrs=None):
+        """Add multiple attribute to the final HTML attributes"""
+        attrs = super().build_attrs(base_attrs, extra_attrs)
+        attrs['multiple'] = True
+        return attrs
 
 
 class SenderEmailForm(forms.ModelForm):
@@ -34,80 +52,16 @@ class SenderEmailForm(forms.ModelForm):
             'is_active': 'Uncheck to disable this sender account without deleting it.'
         }
 
-
-class EmailComposeForm(forms.Form):
-    """Form for composing and sending emails. Returns data as a list."""
-    
-    recipient_email = forms.EmailField(
-        label='Recipient Email Address',
-        required=True,
-        widget=forms.EmailInput(attrs={
-            'class': 'form-control',
-            'placeholder': 'recipient@example.com'
-        }),
-        help_text='Enter the recipient\'s email address.'
-    )
-    
-    subject = forms.CharField(
-        label='Subject',
-        required=True,
-        max_length=255,
-        widget=forms.TextInput(attrs={
-            'class': 'form-control',
-            'placeholder': 'Enter email subject'
-        }),
-        help_text='Enter the subject line for your email.'
-    )
-    
-    message = forms.CharField(
-        label='Message',
-        required=True,
-        widget=forms.Textarea(attrs={
-            'class': 'form-control',
-            'placeholder': 'Enter your message here...',
-            'rows': 10
-        }),
-        help_text='Enter the email message content.'
-    )
-    
-    def get_email_data_as_list(self):
-        """
-        Returns the form data as a list in the format:
-        [recipient_email_address, subject, message]
-        """
-        if self.is_valid():
-            return [
-                self.cleaned_data['recipient_email'],
-                self.cleaned_data['subject'],
-                self.cleaned_data['message']
-            ]
-        return None
-    
-    def clean_recipient_email(self):
-        """Validate recipient email address."""
-        recipient_email = self.cleaned_data.get('recipient_email')
-        if recipient_email:
-            recipient_email = recipient_email.strip().lower()
-        return recipient_email
-    
-    def clean_subject(self):
-        """Validate and strip subject."""
-        subject = self.cleaned_data.get('subject')
-        if subject:
-            subject = subject.strip()
-        return subject
-
-
 class EmailOperationsForm(forms.ModelForm):
     """Form for creating EmailOperations"""
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Update widget classes to match template styling
+        # Don't update message field as it uses TinyMCE widget
         self.fields['sender'].widget.attrs.update({'class': 'form-control'})
         self.fields['recipient'].widget.attrs.update({'class': 'form-control'})
         self.fields['subject'].widget.attrs.update({'class': 'form-control'})
-        self.fields['message'].widget.attrs.update({'class': 'form-control'})
     
     class Meta:
         model = EmailOperations
@@ -124,10 +78,10 @@ class EmailOperationsForm(forms.ModelForm):
                 'class': 'form-control',
                 'placeholder': 'Enter email subject'
             }),
-            'message': forms.Textarea(attrs={
+            'message': TinyMCE(attrs={
+                'cols': 80,
+                'rows': 20,
                 'class': 'form-control',
-                'placeholder': 'Enter your message here...',
-                'rows': 10
             }),
         }
         labels = {
@@ -136,3 +90,17 @@ class EmailOperationsForm(forms.ModelForm):
             'subject': 'Subject',
             'message': 'Message',
         }
+
+class AttachmentForm(forms.ModelForm):
+    """Form for uploading file attachments"""
+    file = forms.FileField(
+        widget=MultipleFileInput(attrs={
+            'class': 'form-control-file'
+        }),
+        required=False,
+        label="Attach Files"
+    )
+
+    class Meta:
+        model = Attachment
+        fields = ['file']
